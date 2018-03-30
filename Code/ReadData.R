@@ -1,7 +1,7 @@
 library(sas7bdat)
 library(statmod)
 ### read rawdata
-dat = read.sas7bdat("data/forndeath1.sas7bdat")
+dat = read.sas7bdat("Data/forndeath1.sas7bdat")
 
 dat.null.with = dat[dat$epidural == 2 & dat$cohort == "Nulliparous",] 
 dat.multi.with = dat[dat$epidural == 2 & dat$cohort == "Multiparous",] 
@@ -9,9 +9,9 @@ dat.null.without = dat[dat$epidural == 1 & dat$cohort == "Nulliparous",]
 dat.multi.without = dat[dat$epidural == 1 & dat$cohort == "Multiparous",] 
 
 
-############ make nullwithout.csv file
+### nulliparous women without epidural
 d.time = (dat.null.without$stage2)
-X1 = dat.null.without$admbmi # missing values (13.45%)
+X1 = dat.null.without$admbmi
 X2 = dat.null.without$Momage
 Delta = ifelse(dat.null.without$spontvd == 2, 1, 0)
 Delta = ifelse(dat.null.without$cesdli == 2, 2, Delta)
@@ -41,11 +41,11 @@ obs.age = (obs.X2 - mean(obs.X2)) / sd(obs.X2)
 nullwithout = cbind(obs.T, obs.Delta, obs.U, obs.X1, obs.X2, obs.bmi1, obs.bmi2, obs.bmi3, obs.age)
 nullwithout = as.data.frame(null.without)
 
-write.table(nullwithout, file = "data/nullwithout.csv", col.names = TRUE,
+write.table(nullwithout, file = "Data/nullwithout.csv", col.names = TRUE,
             sep = ",", row.names = FALSE)
-nullwithout = read.csv("data/nullwithout.csv", header= TRUE, sep = ",")
+nullwithout = read.csv("Data/nullwithout.csv", header= TRUE, sep = ",")
 
-pdf("figure/NullWithout.pdf", width = 10, height = 5)
+pdf("Figure/NullWithout.pdf", width = 10, height = 5)
 par(mfrow = c(1,1), cex.main = 3, cex.lab = 3, cex.axis = 2,
     mar = c(7,7,7,3), tcl = 0.5)
 plot(density(obs.T[obs.Delta == 1]), xlab = "Time on secondary stage labor (hour)",
@@ -66,6 +66,8 @@ polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0
 abline(v = 2, lwd = 2, col = "red")
 dev.off()
 
+
+### multiparous women without epidural
 d.time = (dat.multi.without$stage2)
 X1 = dat.multi.without$admbmi 
 X2 = dat.multi.without$Momage
@@ -97,12 +99,12 @@ obs.age = (obs.X2 - mean(obs.X2))/sd(obs.X2)
 multiwithout = cbind(obs.T, obs.Delta, obs.U, obs.X1, obs.X2, obs.bmi1, obs.bmi2, obs.bmi3, obs.age)
 multiwithout = as.data.frame(multi.without)
 
-write.table(multiwithout, file = "data/multiwithout.csv", col.names = TRUE,
+write.table(multiwithout, file = "Data/multiwithout.csv", col.names = TRUE,
             sep = ",", row.names = FALSE)
 
 
 ### Figure : distribution of delivery time stratified by parity
-pdf("figure/MultiWithout.pdf", width = 10, height = 5)
+pdf("Figure/MultiWithout.pdf", width = 10, height = 5)
 par(mfrow = c(1,1), cex.main = 3, cex.lab = 3, cex.axis = 2,
     mar = c(7,7,7,3), tcl = 0.5)
 plot(density(obs.T[obs.Delta == 1]), xlab = "Time on secondary stage labor (hour)",
@@ -128,10 +130,7 @@ legend("topright", c("SVD", "CS", "OVD"),
 dev.off()
 
 
-
-
-
-############### table ##########################
+## table
 delta.table = matrix(0, nrow = 2, ncol = 6)
 delta.table[,1] = c("Nulliparous", "Multiparous")
 delta.table[,2] = c("Wihtout", "Without")
@@ -150,144 +149,36 @@ colnames(delta.table) = c("Parous", "Epidural",
 
 print(xtable(delta.table), row.names = NULL)
 
-### distribution of age stratified (a) parity and by (b) BMI
-pdf("figure/null_hist.pdf", width = 12, height = 8)
-par(mfrow = c(1,3),  cex.lab = 2, oma = c(5, 5, 2, 2),
-    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
-    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
-
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "SVD",
-     xlab = "", ylim = c(0, 400), xlim = c(13, 45))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE)
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE)
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE)
-
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "CS", ylab= "",
-     xlab = "", ylim = c(0, 15), xlim = c(13, 45),
-     breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE, breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE, breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(13, 45, 2))
+## nulliparous women by BMI classification
+null.tab = matrix(0, nrow = 4, ncol = 4)
+colnames(null.tab) = c("Underweight/Normal", "Overweight", "Obesity", "Total")
+rownames(null.tab) = c("SVD", "CS", "OVD", "Total")
+svd.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi1 == 1)])
+svd.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1)])
+svd.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi3 == 1)])
+svd.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1)])
+cs.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi1 == 1)])
+cs.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1)])
+cs.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi3 == 1)])
+cs.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2)])
+ovd.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi1 == 1)])
+ovd.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1)])
+ovd.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi3 == 1)])
+ovd.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3)])
 
 
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "OVD", ylab= "",
-     xlab = "", ylim = c(0, 40), xlim = c(13, 45),
-     breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE, breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE, breaks = seq(13, 45, 2))
-hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE,breaks = seq(13, 45, 2))
-legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
-       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
-       pch = c(15, 12 , 15), cex=2, bty='n')
-mtext("Nulliparous women without epidural", side = 1, line = -53, outer = TRUE, cex= 2)
-mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
-mtext("Frequency", side = 2, line = 1, outer = TRUE, cex= 2)
-dev.off()
+bmi1.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi1 == 1)])
+bmi2.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi2 == 1)])
+bmi3.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi3 == 1)])
+alls = length(nullwithout$obs.X2)
+
+null.tab[1,] = c(svd.bmi1, svd.bmi2, svd.bmi3, svd.allbmi)
+null.tab[2,] = c(cs.bmi1, cs.bmi2, cs.bmi3, cs.allbmi)
+null.tab[3,] = c(ovd.bmi1, ovd.bmi2, ovd.bmi3, ovd.allbmi)
+null.tab[4,] = c(bmi1.all, bmi2.all, bmi3.all, alls)
 
 
-
-pdf("figure/multi_hist.pdf", width = 12, height = 8)
-par(mfrow = c(1,2),  cex.lab = 2, oma = c(5, 5, 2, 2),
-    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
-    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
-
-hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "SVD",
-     xlab = "", ylim = c(0, 800), xlim = c(14, 53))
-hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE)
-hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE)
-hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE)
-
-hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "non-SVD", ylab ="",
-     xlab = "", ylim = c(0, 30), xlim = c(14, 53),
-     breaks = seq(14, 53, 2))
-hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE, breaks = seq(14, 53, 2))
-hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE, breaks = seq(14, 53, 2))
-hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(14, 53, 2))
-legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
-       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
-       pch = c(15, 12 , 15), cex=1.5, bty = 'n')
-mtext("Multiparous women without epidural", side = 1, line = -32, outer = TRUE, cex= 2)
-mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
-mtext("Frequency", side = 2, line = 1.2, outer = TRUE, cex= 2)
-dev.off()
-
-
-pdf("figure/multi_hist_beyond10.pdf", width = 12, height = 8)
-par(mfrow = c(1,2),  cex.lab = 2, oma = c(5, 5, 2, 2),
-    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
-    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
-
-hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "SVD",
-     xlab = "", ylim = c(0, 400), xlim = c(14, 53))
-hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE)
-hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE)
-hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE)
-
-hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi1 == 1],
-     col = rgb(0,0,0,0.8),
-     main = "CS or OVD", ylab ="",
-     xlab = "", ylim = c(0, 20), xlim = c(14, 53),
-     breaks = seq(14, 53, 2))
-hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 90, 
-     add = TRUE, breaks = seq(14, 53, 2))
-hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi2 == 1],
-     col = rgb(0,0,0,0.5), density=10, angle= 180, 
-     add = TRUE, breaks = seq(14, 53, 2))
-hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi3 == 1],
-     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(14, 53, 2))
-legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
-       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
-       pch = c(15, 12 , 15), cex=1.5, bty = 'n')
-mtext( expression(paste("Multiparous women without epidural ( delivery ", time >= 10, " min)" )), 
-       side = 1, line = -32, outer = TRUE, cex= 2)
-mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
-mtext("Frequency", side = 2, line = 1.2, outer = TRUE, cex= 2)
-dev.off()
-
-######## multiwithout < 10 and >= 10 ######################
+## divide multiparous women by delivery time (< 10 min, >= 10 min)
 data = read.csv("data/multiwithout.csv", header= TRUE, sep = ",")
 ind1 = which(data$obs.T*60 <= 10)
 ind2 = which(data$obs.T*60 > 10)
@@ -354,77 +245,139 @@ data2.tab.age[3,] = quantile(data2$obs.X1[data2$obs.U == 1] , c(0.25, 0.50, 0.75
 data2.tab.age[4,] = quantile(data2$obs.X1[data2$obs.U == 0] , c(0.25, 0.50, 0.75))
 print(xtable(formatC(data2.tab.age, format = "f", digits = 2)))
 
+## distribution of age stratified (a) parity and by (b) BMI
+pdf("Figure/null_hist.pdf", width = 12, height = 8)
+par(mfrow = c(1,3),  cex.lab = 2, oma = c(5, 5, 2, 2),
+    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
+    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
+
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "SVD",
+     xlab = "", ylim = c(0, 400), xlim = c(13, 45))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE)
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE)
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 1 & nullwithout$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE)
+
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "CS", ylab= "",
+     xlab = "", ylim = c(0, 15), xlim = c(13, 45),
+     breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE, breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE, breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 2 & nullwithout$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(13, 45, 2))
 
 
-##################### multiparous table ############################
-multi.tab = matrix(0, nrow = 4, ncol = 4)
-colnames(multi.tab) = c("Underweight/Normal", "Overweight", "Obesity", "Total")
-rownames(multi.tab) = c("SVD", "CS", "OVD", "Total")
-svd.bmi1 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 1 & multiwithout$obs.bmi1 == 1)], c(0.25, 0.50, 0.75))
-svd.bmi2 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 1 & multiwithout$obs.bmi2 == 1)], c(0.25, 0.50, 0.75))
-svd.bmi3 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 1 & multiwithout$obs.bmi3 == 1)], c(0.25, 0.50, 0.75))
-svd.allbmi = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 1)], c(0.25, 0.50, 0.75))
-cs.bmi1 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 2 & multiwithout$obs.bmi1 == 1)], c(0.25, 0.50, 0.75))
-cs.bmi2 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 2 & multiwithout$obs.bmi2 == 1)], c(0.25, 0.50, 0.75))
-cs.bmi3 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 2 & multiwithout$obs.bmi3 == 1)], c(0.25, 0.50, 0.75))
-cs.allbmi = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 2)], c(0.25, 0.50, 0.75))
-ovd.bmi1 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 3 & multiwithout$obs.bmi1 == 1)], c(0.25, 0.50, 0.75))
-ovd.bmi2 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 3 & multiwithout$obs.bmi2 == 1)], c(0.25, 0.50, 0.75))
-ovd.bmi3 = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 3 & multiwithout$obs.bmi3 == 1)], c(0.25, 0.50, 0.75))
-ovd.allbmi = quantile(multiwithout$obs.X2[which(multiwithout$obs.Delta == 3)], c(0.25, 0.50, 0.75))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "OVD", ylab= "",
+     xlab = "", ylim = c(0, 40), xlim = c(13, 45),
+     breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE, breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE, breaks = seq(13, 45, 2))
+hist(nullwithout$obs.X2[nullwithout$obs.Delta == 3 & nullwithout$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE,breaks = seq(13, 45, 2))
+legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
+       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
+       pch = c(15, 12 , 15), cex=2, bty='n')
+mtext("Nulliparous women without epidural", side = 1, line = -53, outer = TRUE, cex= 2)
+mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
+mtext("Frequency", side = 2, line = 1, outer = TRUE, cex= 2)
+dev.off()
 
 
-bmi1.all = quantile(multiwithout$obs.X2[which(multiwithout$obs.bmi1 == 1)], c(0.25, 0.50, 0.75))
-bmi2.all = quantile(multiwithout$obs.X2[which(multiwithout$obs.bmi2 == 1)], c(0.25, 0.50, 0.75))
-bmi3.all = quantile(multiwithout$obs.X2[which(multiwithout$obs.bmi3 == 1)], c(0.25, 0.50, 0.75))
-alls = quantile(multiwithout$obs.X2, c(0.25, 0.50, 0.75))
 
-multi.tab[1,] = c( paste(svd.bmi1[2], " (", svd.bmi1[1], ", ", svd.bmi1[3], ")", sep=""),
-                   paste(svd.bmi2[2], " (", svd.bmi2[1], ", ", svd.bmi2[3], ")",sep=""),
-                   paste(svd.bmi3[2], " (", svd.bmi3[1], ", ", svd.bmi3[3], ")", sep=""),
-                   paste(svd.allbmi[2], " (", svd.allbmi[1], ", ", svd.allbmi[3], ")",sep=""))
-multi.tab[2,] = c( paste(cs.bmi1[2], " (", cs.bmi1[1], ", ", cs.bmi1[3],")", sep=""),
-                   paste(cs.bmi2[2], " (", cs.bmi2[1], ", ", cs.bmi2[3], ")",sep=""),
-                   paste(cs.bmi3[2], " (", cs.bmi3[1], ", ", cs.bmi3[3], ")",sep=""),
-                   paste(cs.allbmi[2], " (", cs.allbmi[1], ", ", cs.allbmi[3], ")",sep=""))
-multi.tab[3,] = c( paste(ovd.bmi1[2], " (", ovd.bmi1[1], ", ", ovd.bmi1[3], ")",sep=""),
-                   paste(ovd.bmi2[2], " (", ovd.bmi2[1], ", ", ovd.bmi2[3], ")",sep=""),
-                   paste(ovd.bmi3[2], " (", ovd.bmi3[1], ", ", ovd.bmi3[3], ")",sep=""),
-                   paste(ovd.allbmi[2], " (", ovd.allbmi[1], ", ", ovd.allbmi[3], ")",sep=""))
-multi.tab[4,] = c( paste(bmi1.all[2], " (", bmi1.all[1], ", ", bmi1.all[3], ")",sep=""),
-                   paste(bmi2.all[2], " (", bmi2.all[1], ", ", bmi2.all[3], ")",sep=""),
-                   paste(bmi3.all[2], " (", bmi3.all[1], ", ", bmi3.all[3], ")",sep=""),
-                   paste(alls[2], " (", alls[1], ", ", alls[3], ")",sep=""))
+pdf("Figure/multi_hist.pdf", width = 12, height = 8)
+par(mfrow = c(1,2),  cex.lab = 2, oma = c(5, 5, 2, 2),
+    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
+    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
 
-tab = cbind(null.tab, multi.tab)
-print(xtable(tab))
+hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "SVD",
+     xlab = "", ylim = c(0, 800), xlim = c(14, 53))
+hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE)
+hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE)
+hist(multiwithout$obs.X2[multiwithout$obs.Delta == 1 & multiwithout$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE)
 
-##################### the number of subjects ####################
-null.tab = matrix(0, nrow = 4, ncol = 4)
-colnames(null.tab) = c("Underweight/Normal", "Overweight", "Obesity", "Total")
-rownames(null.tab) = c("SVD", "CS", "OVD", "Total")
-svd.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi1 == 1)])
-svd.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi2 == 1)])
-svd.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1 & nullwithout$obs.bmi3 == 1)])
-svd.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 1)])
-cs.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi1 == 1)])
-cs.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi2 == 1)])
-cs.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2 & nullwithout$obs.bmi3 == 1)])
-cs.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 2)])
-ovd.bmi1 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi1 == 1)])
-ovd.bmi2 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi2 == 1)])
-ovd.bmi3 = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3 & nullwithout$obs.bmi3 == 1)])
-ovd.allbmi = length(nullwithout$obs.X2[which(nullwithout$obs.Delta == 3)])
+hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "non-SVD", ylab ="",
+     xlab = "", ylim = c(0, 30), xlim = c(14, 53),
+     breaks = seq(14, 53, 2))
+hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE, breaks = seq(14, 53, 2))
+hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE, breaks = seq(14, 53, 2))
+hist(multiwithout$obs.X2[multiwithout$obs.Delta != 1 & multiwithout$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(14, 53, 2))
+legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
+       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
+       pch = c(15, 12 , 15), cex=1.5, bty = 'n')
+mtext("Multiparous women without epidural", side = 1, line = -32, outer = TRUE, cex= 2)
+mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
+mtext("Frequency", side = 2, line = 1.2, outer = TRUE, cex= 2)
+dev.off()
 
 
-bmi1.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi1 == 1)])
-bmi2.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi2 == 1)])
-bmi3.all = length(nullwithout$obs.X2[which(nullwithout$obs.bmi3 == 1)])
-alls = length(nullwithout$obs.X2)
+pdf("Figure/multi_hist_beyond10.pdf", width = 12, height = 8)
+par(mfrow = c(1,2),  cex.lab = 2, oma = c(5, 5, 2, 2),
+    cex.main = 2, cex.axis = 1.5, tcl = 0.5, lwd=2,
+    mai = c(0.7, 0.3, 0.3, 0.3), oma = c(5, 5, 7, 2))
 
-null.tab[1,] = c(svd.bmi1, svd.bmi2, svd.bmi3, svd.allbmi)
-null.tab[2,] = c(cs.bmi1, cs.bmi2, cs.bmi3, cs.allbmi)
-null.tab[3,] = c(ovd.bmi1, ovd.bmi2, ovd.bmi3, ovd.allbmi)
-null.tab[4,] = c(bmi1.all, bmi2.all, bmi3.all, alls)
+hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "SVD",
+     xlab = "", ylim = c(0, 400), xlim = c(14, 53))
+hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE)
+hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE)
+hist(data2$obs.X2[data2$obs.Delta == 1 & data2$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE)
 
-
+hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi1 == 1],
+     col = rgb(0,0,0,0.8),
+     main = "CS or OVD", ylab ="",
+     xlab = "", ylim = c(0, 20), xlim = c(14, 53),
+     breaks = seq(14, 53, 2))
+hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 90, 
+     add = TRUE, breaks = seq(14, 53, 2))
+hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi2 == 1],
+     col = rgb(0,0,0,0.5), density=10, angle= 180, 
+     add = TRUE, breaks = seq(14, 53, 2))
+hist(data2$obs.X2[data2$obs.Delta != 1 & data2$obs.bmi3 == 1],
+     col = rgb(0,0,0,0.3), add = TRUE, breaks = seq(14, 53, 2))
+legend("topright", c("Underweight/Normal", "Overweight", "Obese"), 
+       col = c(rgb(0,0,0,0.8), rgb(0,0,0,0.5), rgb(0,0,0,0.3)),
+       pch = c(15, 12 , 15), cex=1.5, bty = 'n')
+mtext( expression(paste("Multiparous women without epidural ( delivery ", time >= 10, " min)" )), 
+       side = 1, line = -32, outer = TRUE, cex= 2)
+mtext("Mother's age", side = 1, line = 1, outer = TRUE, cex= 2)
+mtext("Frequency", side = 2, line = 1.2, outer = TRUE, cex= 2)
+dev.off()
