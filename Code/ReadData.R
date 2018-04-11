@@ -1,13 +1,12 @@
 library(sas7bdat)
 library(statmod)
 ### read rawdata
-dat = read.sas7bdat("Data/forndeath1.sas7bdat")
+#dat = read.sas7bdat("Data/forndeath1.sas7bdat") # restricted data
 
 dat.null.with = dat[dat$epidural == 2 & dat$cohort == "Nulliparous",] 
 dat.multi.with = dat[dat$epidural == 2 & dat$cohort == "Multiparous",] 
 dat.null.without = dat[dat$epidural == 1 & dat$cohort == "Nulliparous",] 
 dat.multi.without = dat[dat$epidural == 1 & dat$cohort == "Multiparous",] 
-
 
 ### nulliparous women without epidural
 d.time = (dat.null.without$stage2)
@@ -43,7 +42,7 @@ nullwithout = as.data.frame(null.without)
 
 write.table(nullwithout, file = "Data/nullwithout.csv", col.names = TRUE,
             sep = ",", row.names = FALSE)
-nullwithout = read.csv("Data/nullwithout.csv", header= TRUE, sep = ",")
+#nullwithout = read.csv("Data/nullwithout.csv", header= TRUE, sep = ",") # restricted data
 
 pdf("Figure/NullWithout.pdf", width = 10, height = 5)
 par(mfrow = c(1,1), cex.main = 3, cex.lab = 3, cex.axis = 2,
