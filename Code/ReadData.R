@@ -1,8 +1,7 @@
 library(sas7bdat)
 library(statmod)
 ### read rawdata
-#dat = read.sas7bdat("Data/forndeath1.sas7bdat") # restricted data
-
+#dat = read.sas7bdat("Data/forndeath1.sas7bdat") # restricted use
 dat.null.with = dat[dat$epidural == 2 & dat$cohort == "Nulliparous",] 
 dat.multi.with = dat[dat$epidural == 2 & dat$cohort == "Multiparous",] 
 dat.null.without = dat[dat$epidural == 1 & dat$cohort == "Nulliparous",] 
@@ -122,7 +121,7 @@ polygon(density(obs.T[obs.Delta == 2]), col= rgb(0,0,0,0.3) , border=rgb(0,0,0,0
 lines(density(obs.T[obs.Delta == 3]), col = rgb(0,0,0,0.7), lwd = 4)
 polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0.7))
 abline(v = 1, lwd = 2, col = "red")
-legend("topright", c("SVD", "CS", "OVD"),
+legend("topright", c("SVD", "CD", "OVD"),
        col = c(rgb(0,0,0,0.5), rgb(0,0,0,0.3), rgb(0,0,0,0.7)),
        seg.len = 3,
        pch = c(12, 15, 15),  bty = 'n', cex = 2, xpd = NA)

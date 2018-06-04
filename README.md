@@ -9,6 +9,7 @@ Joint Modeling of Competing Risks and Current Status Data: An Application to Spo
 - [sim_model.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/sim_model.R) : generates the explanatory plots for simulation scenarios. 
 - [Lognormal_real.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/Lognormal_real.R) : Based on the real data from nulliparous women and multiparous women, fit the joint model and estimate the parameters including the effect of baseline covariates. We assume three different Cox model depending on baseline covariates and assume log-normal distribution for frailty model.
 - [Weibull_real.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/Weibull_real.R) : Based on the real data from nulliparous women and multiparous women, fit the joint model and estimate the parameters including the effect of baseline covariates. We assume three different Cox model depending on baseline covariates and assume Weibull distribution for frailty model.
+- [gradient.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/gradient.R) : Diagnostic gradient function for modal diagnostics.
 - Read result : [Lognormal_readresult.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/Lognormal_readresult.R) \& [Weibull_readresult.R](https://github.com/youjin1207/SafeLabor/blob/master/Code/Weibull_readresult.R)
 - [Rcpp folder](https://github.com/youjin1207/SafeLabor/tree/master/Code/Rcpp) : contains c++ file for calculating likelihood function used for `optim` in `R`. Using c++ (Rcpp) substantially boosts the speed. 
 
