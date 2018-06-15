@@ -57,12 +57,13 @@ axis(side = 2, at = seq(0, 1, 0.2),
 axis(side = 1, at = seq(0, 4, 0.5), 
      labels = seq(0, 4, 0.5), 
      tck = 0.05)
-lines(density(obs.T[obs.Delta == 2]), col = rgb(0,0,0,0.3), lwd = 4)
-polygon(density(obs.T[obs.Delta == 2]), col= rgb(0,0,0,0.3) , border=rgb(0,0,0,0.5))
-lines(density(obs.T[obs.Delta == 3]), col = rgb(0,0,0,0.7), lwd = 4)
-polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0.5))
+lines(density(obs.T[obs.Delta == 2]), col = rgb(0,0,0,0.7), lwd = 4)
+polygon(density(obs.T[obs.Delta == 2]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0.3))
+lines(density(obs.T[obs.Delta == 3]), col = rgb(0,0,0,0.1), lwd = 4)
+polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.1) , border=rgb(0,0,0,0.7))
 abline(v = 2, lwd = 2, col = "red")
 dev.off()
+
 
 
 ### multiparous women without epidural
@@ -116,16 +117,17 @@ axis(side = 2, at = seq(0, 4, 1),
 axis(side = 1, at = seq(0, 4, 0.5), 
      labels = seq(0, 4, 0.5), 
      tck = 0.05)
-lines(density(obs.T[obs.Delta == 2]), col = rgb(0,0,0,0.3), lwd = 4)
-polygon(density(obs.T[obs.Delta == 2]), col= rgb(0,0,0,0.3) , border=rgb(0,0,0,0.3))
-lines(density(obs.T[obs.Delta == 3]), col = rgb(0,0,0,0.7), lwd = 4)
-polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0.7))
+lines(density(obs.T[obs.Delta == 2]), col = rgb(0,0,0,0.7), lwd = 4)
+polygon(density(obs.T[obs.Delta == 2]), col= rgb(0,0,0,0.7) , border=rgb(0,0,0,0.3))
+lines(density(obs.T[obs.Delta == 3]), col = rgb(0,0,0,0.2), lwd = 4)
+polygon(density(obs.T[obs.Delta == 3]), col= rgb(0,0,0,0.2) , border=rgb(0,0,0,0.7))
 abline(v = 1, lwd = 2, col = "red")
 legend("topright", c("SVD", "CD", "OVD"),
-       col = c(rgb(0,0,0,0.5), rgb(0,0,0,0.3), rgb(0,0,0,0.7)),
+       col = c(rgb(0,0,0,0.5), rgb(0,0,0,0.7), rgb(0,0,0,0.2)),
        seg.len = 3,
        pch = c(12, 15, 15),  bty = 'n', cex = 2, xpd = NA)
 dev.off()
+
 
 
 ## table
